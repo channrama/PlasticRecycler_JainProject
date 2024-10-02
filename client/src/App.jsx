@@ -3,6 +3,7 @@ import {Routes,Route} from "react-router-dom"
 import { Main } from "./components/Main"
 import { Register } from "./components/Register"
 import { Login } from "./components/Login"
+import { Forget } from "./components/forget"
 
 
 function App() {
@@ -12,8 +13,9 @@ function App() {
     <>
    <Routes>
     <Route path='/' element={<Main/>}/>
-    <Route path='/about' element={<Register/>}/>
-    <Route path='/contractors' element={<Login/>}/>
+    <Route path='/register' element={<Register/>}/>
+    <Route path='/login' element={<Login/>}/>
+    <Route path='/forgetpassword' element={<Forget/>}/>
    </Routes>
     </>
   )
