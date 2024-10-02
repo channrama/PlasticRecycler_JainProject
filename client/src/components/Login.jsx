@@ -19,8 +19,29 @@ export function Login() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs" style={{ backgroundImage: 'url(/background.jpg)', backgroundSize: 'cover', height: '100vh', display: 'flex', alignItems: 'center' }}>
-        <Paper elevation={6} style={{ padding: '30px', textAlign: 'center', width: '100%' }}>
+      <Container 
+        component="main" 
+        maxWidth="xs" 
+        style={{ 
+          backgroundImage: 'url(/background.jpg)', 
+          backgroundSize: 'cover', 
+          height: '100vh', 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center' 
+        }}
+      >
+        <Paper 
+          elevation={6} 
+          style={{ 
+            padding: '30px', 
+            textAlign: 'center', 
+            width: '100%', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center' 
+          }}
+        >
           <Typography component="h1" variant="h5" align="center" style={{ marginBottom: '20px' }}>
             Welcome to Recycle Bin
           </Typography>
