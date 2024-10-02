@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Container, Typography, Box, Paper } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme();
 
@@ -8,6 +9,9 @@ export function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [adhar, setAdhar] = useState('');
+  const [phone, setPhone] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,12 +19,35 @@ export function Register() {
     console.log('Username:', username);
     console.log('Password:', password);
     console.log('Email:', email);
+    console.log('Adhar:', adhar);
+    console.log('Phone:', phone);
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs" style={{ backgroundImage: 'url(/background.jpg)', backgroundSize: 'cover', height: '100vh', display: 'flex', alignItems: 'center' }}>
-        <Paper elevation={6} style={{ padding: '30px', textAlign: 'center', width: '100%' }}>
+      <Container 
+        component="main" 
+        maxWidth="xs" 
+        style={{ 
+          backgroundImage: 'url(/background.jpg)', 
+          backgroundSize: 'cover', 
+          height: '100vh', 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center' 
+        }}
+      >
+        <Paper 
+          elevation={6} 
+          style={{ 
+            padding: '30px', 
+            textAlign: 'center', 
+            width: '100%', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center' 
+          }}
+        >
           <Typography component="h1" variant="h5" align="center" style={{ marginBottom: '20px' }}>
             Sign Up
           </Typography>
@@ -66,6 +93,32 @@ export function Register() {
               onChange={(e) => setEmail(e.target.value)}
               style={{ marginBottom: '20px' }}
             />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="adhar"
+              label="Adhar Number"
+              name="adhar"
+              autoComplete="adhar"
+              value={adhar}
+              onChange={(e) => setAdhar(e.target.value)}
+              style={{ marginBottom: '20px' }}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="phone"
+              label="Phone Number"
+              name="phone"
+              autoComplete="phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              style={{ marginBottom: '20px' }}
+            />
             <Button
               type="submit"
               fullWidth
@@ -75,6 +128,7 @@ export function Register() {
             >
               Sign Up
             </Button>
+            
           </Box>
         </Paper>
       </Container>
