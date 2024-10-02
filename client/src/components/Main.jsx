@@ -1,7 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { Doughnut } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+// Registering the necessary components for Chart.js
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+// Main Component
+export const Main = () => {
+  return (
+    <div style={styles.container}>
+      <Profile />
+      <ActivityAndNotifications />
+      <Leaderboard />
+    </div>
+  );
+};
 
 // Profile Component (Left Sidebar)
-export const Profile = () => {
+const Profile = () => {
   return (
     <aside style={styles.sidebarLeft}>
       <div style={styles.profile}>
@@ -25,7 +46,7 @@ export const Profile = () => {
 };
 
 // Animated Recycling Counter Component
-export const RecyclingCounter = () => {
+const RecyclingCounter = () => {
   const [recycledCount, setRecycledCount] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -63,11 +84,82 @@ export const RecyclingCounter = () => {
   );
 };
 
+// Eco-Friendly Product Showcase Component
+const EcoFriendlyProductShowcase = () => {
+  const products = [
+    { id: 1, name: 'Reusable Water Bottle', points: 200 },
+    { id: 2, name: 'Bamboo Toothbrush', points: 150 },
+    { id: 3, name: 'Eco-Friendly Bag', points: 100 },
+    { id: 4, name: 'Compostable Plates', points: 250 },
+  ];
+
+  return (
+    <div style={styles.productShowcase}>
+      <h3>Eco-Friendly Products</h3>
+      <div style={styles.productGrid}>
+        {products.map((product) => (
+          <div key={product.id} style={styles.productCard}>
+            <p style={styles.productName}>{product.name}</p>
+            <p>Cost: {product.points} points</p>
+            <button style={styles.redeemButton}>Redeem</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Donut Chart Component
+const DonutChart = () => {
+  const data = {
+    labels: ['Recycled', 'Remaining'],
+    datasets: [
+      {
+        data: [70, 30], // Example data
+        backgroundColor: ['#4caf50', '#e0e0e0'],
+        hoverBackgroundColor: ['#66bb6a', '#cfd8dc'],
+      },
+    ],
+  };
+
+  return (
+    <div style={styles.donutChart}>
+      <h3>Recycling Progress</h3>
+      <Doughnut data={data} width={200} height={200} options={{ maintainAspectRatio: false }} />
+    </div>
+  );
+};
+
+// Achievement Badges Component
+const AchievementBadges = () => {
+  const badges = [
+    { id: 1, name: 'Recycling Rookie', milestone: '5 items recycled' },
+    { id: 2, name: 'Eco Warrior', milestone: '50 items recycled' },
+    { id: 3, name: 'Sustainability Champion', milestone: '100 items recycled' },
+  ];
+
+  return (
+    <div style={styles.badges}>
+      <h3>Achievement Badges</h3>
+      <div style={styles.badgeGrid}>
+        {badges.map((badge) => (
+          <div key={badge.id} style={styles.badgeCard}>
+            <p>{badge.name}</p>
+            <p>{badge.milestone}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 // Activity & Notifications Component (Main Content)
-export const ActivityAndNotifications = () => {
+const ActivityAndNotifications = () => {
   return (
     <main style={styles.mainContent}>
       <RecyclingCounter />
+      <EcoFriendlyProductShowcase />
+      <AchievementBadges />
       <section style={styles.activitySection}>
         <h3>Recent Activity</h3>
         <div style={styles.activityCard}>Posted an article - 2 hours ago</div>
@@ -84,36 +176,21 @@ export const ActivityAndNotifications = () => {
 };
 
 // Leaderboard Component (Right Sidebar)
-export const Leaderboard = () => {
+const Leaderboard = () => {
   return (
     <aside style={styles.sidebarRight}>
       <h3>Leaderboard</h3>
-      <ul style={styles.leaderboard}>
-        <li style={styles.leaderboardItem}>
-          <span>1.</span> Alice - 1800 points
-        </li>
-        <li style={styles.leaderboardItem}>
-          <span>2.</span> Bob - 1750 points
-        </li>
-        <li style={styles.leaderboardItem}>
-          <span>3.</span> Charlie - 1650 points
-        </li>
-        <li style={styles.leaderboardItem}>
-          <span>4.</span> Dave - 1600 points
-        </li>
-      </ul>
+      <div style={styles.leaderboardContainer}>
+        <ul style={styles.leaderboard}>
+          {Array.from({ length: 50 }).map((_, index) => (
+            <li key={index} style={styles.leaderboardItem}>
+              <span>{index + 1}.</span> User {index + 1} - {Math.floor(Math.random() * 2000)} points
+            </li>
+          ))}
+        </ul>
+      </div>
+      <DonutChart />
     </aside>
-  );
-};
-
-// Main Layout Component
-export const Main = () => {
-  return (
-    <div style={styles.container}>
-      <Profile />
-      <ActivityAndNotifications />
-      <Leaderboard />
-    </div>
   );
 };
 
@@ -156,79 +233,123 @@ const styles = {
     marginBottom: '20px',
   },
   scoreBox: {
-    backgroundColor: '#e0f7fa',
-    padding: '10px',
-    borderRadius: '5px',
-    marginBottom: '10px',
+    marginBottom: '15px',
   },
   contributionScore: {
+    fontSize: '18px',
     fontWeight: 'bold',
   },
   creditScore: {
+    fontSize: '18px',
     fontWeight: 'bold',
   },
+  recyclingCounter: {
+    textAlign: 'center',
+    marginBottom: '20px',
+  },
+  counterDisplay: {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    position: 'relative',
+  },
+  plasticItem: {
+    fontSize: '50px',
+    position: 'absolute',
+    bottom: '50px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    transition: 'transform 1s ease, opacity 1s ease',
+  },
+  bin: {
+    fontSize: '50px',
+  },
+  productShowcase: {
+    marginTop: '20px',
+  },
+  productGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+    gap: '10px',
+  },
+  productCard: {
+    border: '1px solid #ccc',
+    borderRadius: '10px',
+    padding: '10px',
+    textAlign: 'center',
+  },
+  productName: {
+    fontWeight: 'bold',
+  },
+  redeemButton: {
+    marginTop: '5px',
+    padding: '5px 10px',
+    backgroundColor: '#28a745',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
+  donutChart: {
+    marginTop: '20px',
+    width: '150px',
+    height: '150px',
+  },
+  badges: {
+    marginTop: '20px',
+  },
+  badgeGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '10px',
+  },
+  badgeCard: {
+    border: '1px solid #ccc',
+    borderRadius: '10px',
+    padding: '10px',
+    textAlign: 'center',
+  },
   mainContent: {
-    display: 'flex',
-    flexDirection: 'column',
+    padding: '20px',
+    backgroundColor: '#f1f1f1',
+    borderRadius: '10px',
+    margin: '20px 0',
   },
   activitySection: {
-    marginBottom: '20px',
+    marginTop: '20px',
   },
   activityCard: {
-    backgroundColor: '#fff',
-    padding: '15px',
-    borderRadius: '5px',
-    marginBottom: '10px',
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ffffff',
+    padding: '10px',
+    margin: '5px 0',
+    borderRadius: '10px',
   },
   notificationSection: {
-    marginBottom: '20px',
+    marginTop: '20px',
   },
   notificationCard: {
-    backgroundColor: '#fff',
-    padding: '15px',
-    borderRadius: '5px',
-    marginBottom: '10px',
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ffffff',
+    padding: '10px',
+    margin: '5px 0',
+    borderRadius: '10px',
   },
   sidebarRight: {
     backgroundColor: '#f8f9fa',
     padding: '20px',
     borderRadius: '10px',
+    height: '100vh', // Adjust to fit the height
+    overflowY: 'auto', // Enable scrolling for the leaderboard
+  },
+  leaderboardContainer: {
+    maxHeight: '400px', // Set a max height for the leaderboard to enable scrolling
+    overflowY: 'auto',
   },
   leaderboard: {
-    listStyleType: 'none',
+    listStyle: 'none',
     padding: 0,
   },
   leaderboardItem: {
-    padding: '10px 0',
-    borderBottom: '1px solid #ddd',
-    display: 'flex',
-    justifyContent: 'space-between',
-    fontWeight: 'bold',
-  },
-  recyclingCounter: {
-    marginBottom: '20px',
-    textAlign: 'center',
-  },
-  counterDisplay: {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    marginBottom: '20px',
-    position: 'relative',
-  },
-  plasticItem: {
-    fontSize: '30px',
-    position: 'absolute',
-    top: 0,
-    left: '50%',
-    transform: 'translateX(-50%)',
-  },
-  bin: {
-    fontSize: '40px',
-    marginTop: '60px',
-    textAlign: 'center',
+    padding: '5px 0',
+    borderBottom: '1px solid #ccc',
   },
 };
 
-export default Main;
