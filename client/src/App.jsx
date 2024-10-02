@@ -3,7 +3,7 @@ import {Routes,Route} from "react-router-dom"
 import { Main } from "./components/Main"
 import { Register } from "./components/Register"
 import { Login } from "./components/Login"
-import { Forget } from "./components/Forget"
+import { Forget } from "./components/forget"
 
 
 function App() {
