@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme();
 
-function Login() {
+export function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -64,12 +64,12 @@ function Login() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2" onClick={() => navigate('/forgot-password')}>
+                <Link href="#" variant="body2" onClick={() => navigate('/forgetpassword')}>
                   Forgot password?
                 </Link>
-              </Grid>
+              </Grid><br/>
               <Grid item>
-                <Link href="#" variant="body2" onClick={() => navigate('/sign-up')}>
+                <Link href="#" variant="body2" onClick={() => navigate('/register')}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
@@ -80,5 +80,3 @@ function Login() {
     </ThemeProvider>
   );
 }
-
-export default Login;
