@@ -1,7 +1,7 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
-import '../components/CSS/main.css'
+import '../components/CSS/main.css';
 
 export function Main() {
   return (
@@ -12,6 +12,7 @@ export function Main() {
         <ActivityGraph />
         <Notifications />
       </div>
+      <SocialMedia /> {/* Added SocialMedia component */}
     </div>
   );
 }
@@ -104,4 +105,25 @@ const ActivityGraph = () => {
   );
 };
 
-
+// SocialMedia Component
+const SocialMedia = () => {
+  return (
+    <div className="social-media">
+      <h2>Connect with Us</h2>
+      <div className="social-media-icons">
+        <a href="#" className="social-icon">
+          <img src="https://via.placeholder.com/30" alt="Facebook" />
+        </a>
+        <a href="#" className="social-icon">
+          <img src="https://via.placeholder.com/30" alt="Twitter" />
+        </a>
+        <a href="#" className="social-icon">
+          <img src="https://via.placeholder.com/30" alt="Instagram" />
+        </a>
+        <a href="#" className="social-icon">
+          <img src="https://via.placeholder.com/30" alt="LinkedIn" />
+        </a>
+      </div>
+    </div>
+  );
+};

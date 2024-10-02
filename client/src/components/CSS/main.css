@@ -97,4 +97,45 @@
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
+  .toggle-leaderboard-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .toggle-leaderboard-button:hover {
+    background-color: #45a049; /* Darker green */
+  }
+  .social-media {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 250px; /* Same width as sidebar */
+    margin-left: 20px; /* Add some spacing */
+  }
+  
+  .social-media h2 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+  }
+  
+  .social-media-icons {
+    display: flex;
+    gap: 15px; /* Space between icons */
+  }
+  
+  .social-icon img {
+    width: 30px; /* Icon size */
+    height: 30px;
+    transition: transform 0.3s; /* Transition for hover effect */
+  }
+  
+  .social-icon:hover img {
+    transform: scale(1.1); /* Scale effect on hover */
+  }
   
