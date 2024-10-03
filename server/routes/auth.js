@@ -1,134 +1,69 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { check, validationResult } = require('express-validator');
-const User = require('../models/User');
-const auth = require('../middleware/auth');
+const User = require('../models/User'); // Ensure this path is correct based on your project structure
 const router = express.Router();
 
-// Register a new user
-router.post(
-  '/register',
-  [
-    check('name', 'Name is required').not().isEmpty(),
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password must be 6 or more characters').isLength({ min: 6 }),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+// Register
+router.post('/register', async (req, res) => {
+  const { username, email, password, aadhar, phone } = req.body;
 
-    const { name, email, password } = req.body;
-
-    try {
-      let user = await User.findOne({ email });
-      if (user) {
-        return res.status(400).json({ msg: 'User already exists' });
-      }
-
-      user = new User({ name, email, password });
-
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
-
-      await user.save();
-
-      const payload = { user: { id: user.id } };
-
-      jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: 3600 },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server error');
-    }
+  // Check for required fields
+  if (!username || !email || !password || !aadhar || !phone) {
+    return res.status(400).json({ msg: 'All fields are required.' });
   }
-);
 
-// Login a user
-router.post(
-  '/login',
-  [
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password is required').exists(),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { email, password } = req.body;
-
-    try {
-      let user = await User.findOne({ email });
-      if (!user) {
-        return res.status(400).json({ msg: 'Invalid credentials' });
-      }
-
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).json({ msg: 'Invalid credentials' });
-      }
-
-      const payload = { user: { id: user.id } };
-
-      jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: 3600 },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server error');
-    }
-  }
-);
-
-// Get logged-in user data
-router.get('/me', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
-    res.json(user);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    // Check if Aadhar or Phone already exists
+    const existingUser = await User.findOne({ $or: [{ aadhar }, { phone }] });
+    if (existingUser) {
+      return res.status(400).json({ msg: 'Aadhar or Phone number already exists.' });
+    }
+
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+      aadhar,
+      phone
+    });
+
+    await newUser.save();
+    res.status(201).json({ msg: 'User registered successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 
-// Update plastic history
-router.put('/plastic-history', auth, async (req, res) => {
-  const { plasticAdded, earned } = req.body;
+// Login
+router.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  // Check for required fields
+  if (!username || !password) {
+    return res.status(400).json({ msg: 'All fields are required.' });
+  }
 
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findOne({ username });
     if (!user) {
-      return res.status(404).json({ msg: 'User not found' });
+      return res.status(400).json({ msg: 'Invalid credentials.' });
     }
 
-    // Update credit score
-    user.creditScore += Math.floor(plasticAdded / 10);  // Example: 10 points per unit
+    // Check if password matches
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: 'Invalid credentials.' });
+    }
 
-    // Add plastic history entry
-    user.plasticHistory.push({ plasticAdded, earned });
-
-    await user.save();
-    res.json(user.plasticHistory);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    // User authenticated successfully
+    res.status(200).json({ msg: 'Login successful', user: { username: user.username, email: user.email } });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Server error' });
   }
 });
 

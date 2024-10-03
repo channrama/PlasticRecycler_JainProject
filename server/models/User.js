@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  phone: { type: String, required: true, unique: true },
+  aadhar: { type: String, required: true, unique: true }, // Aadhar should be unique and required
+  username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   plasticHistory: [{
@@ -10,7 +12,7 @@ const userSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now }
   }],
   creditScore: { type: Number, default: 0 },
-  resetToken: { type: String, default: undefined } // For password reset
+  resetToken: { type: String, default: undefined }
 });
 
 module.exports = mongoose.model('User', userSchema);
