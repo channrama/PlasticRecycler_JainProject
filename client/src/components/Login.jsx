@@ -1,3 +1,4 @@
+// frontend/src/components/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -23,7 +24,7 @@ const Login = () => {
       localStorage.setItem('userDetails', JSON.stringify(userDetails));
 
       // Redirect to main page after successful login
-      navigate('/');
+      navigate('/'); // Adjust the path as necessary
     } catch (error) {
       if (error.response && error.response.status === 400) {
         setError(error.response.data.msg); // Set error message from server
