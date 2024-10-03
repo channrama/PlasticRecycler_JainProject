@@ -1,11 +1,14 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User'); // Ensure this path is correct based on your project structure
 const router = express.Router();
 
+const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret'; // Use environment variable for security
+
 // Register
 router.post('/register', async (req, res) => {
-  const { username, email, password, aadhar, phone,plasticHistory } = req.body;
+  const { username, email, password, aadhar, phone, plasticHistory } = req.body;
 
   // Check for required fields
   if (!username || !email || !password || !aadhar || !phone) {
@@ -40,6 +43,7 @@ router.post('/register', async (req, res) => {
 });
 
 // Login
+
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -60,8 +64,23 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ msg: 'Invalid credentials.' });
     }
 
-    // User authenticated successfully
-    res.status(200).json({ msg: 'Login successful', user: { username: user.username, email: user.email } });
+    // Generate JWT
+    const token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, {
+      expiresIn: '1h' // Token valid for 1 hour
+    });
+
+    // Send token and user details in the response
+    res.status(200).json({ 
+      msg: 'Login successful', 
+      token, 
+      user: {
+        username: user.username,
+        email: user.email,
+        aadhar: user.aadhar,
+        phone: user.phone,
+        plasticHistory: user.plasticHistory // Include other details if necessary
+      }
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: 'Server error' });
