@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Doughnut } from 'react-chartjs-2';
+import { Doughnut, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   ArcElement,
+  LineElement,
   Tooltip,
   Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement,
 } from 'chart.js';
 
-// Registering the necessary components for Chart.js
-ChartJS.register(ArcElement, Tooltip, Legend);
+// Registering Chart.js components
+ChartJS.register(
+  ArcElement,
+  LineElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  PointElement
+);
 
 // Main Component
 export const Main = () => {
@@ -45,7 +57,7 @@ const Profile = () => {
   );
 };
 
-// Animated Recycling Counter Component
+// Recycling Counter Component
 const RecyclingCounter = () => {
   const [recycledCount, setRecycledCount] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -125,7 +137,41 @@ const DonutChart = () => {
   return (
     <div style={styles.donutChart}>
       <h3>Recycling Progress</h3>
-      <Doughnut data={data} width={200} height={200} options={{ maintainAspectRatio: false }} />
+      <Doughnut data={data} options={{ maintainAspectRatio: false }} />
+    </div>
+  );
+};
+
+// Audience Growth Line Chart Component
+const AudienceGrowth = () => {
+  const data = {
+    labels: ['1 Feb', '2 Feb', '3 Feb', '4 Feb', '5 Feb', '6 Feb', '7 Feb'],
+    datasets: [
+      {
+        label: 'Organic Page Likes',
+        data: [12, 10, 14, 15, 18, 20, 25],
+        borderColor: '#FF6600',
+        fill: false,
+      },
+      {
+        label: 'Paid Page Likes',
+        data: [8, 9, 10, 12, 14, 16, 18],
+        borderColor: '#6610f2',
+        fill: false,
+      },
+      {
+        label: 'Page Unlikes',
+        data: [5, 4, 6, 5, 7, 8, 9],
+        borderColor: '#999999',
+        fill: false,
+      },
+    ],
+  };
+
+  return (
+    <div style={styles.chartContainer}>
+      <h3>Audience Growth</h3>
+      <Line data={data} options={{ responsive: true }} />
     </div>
   );
 };
@@ -160,6 +206,7 @@ const ActivityAndNotifications = () => {
       <RecyclingCounter />
       <EcoFriendlyProductShowcase />
       <AchievementBadges />
+      <AudienceGrowth />
       <section style={styles.activitySection}>
         <h3>Recent Activity</h3>
         <div style={styles.activityCard}>Posted an article - 2 hours ago</div>
@@ -293,6 +340,9 @@ const styles = {
     marginTop: '20px',
     width: '150px',
     height: '150px',
+  },
+  chartContainer: {
+    marginTop: '20px',
   },
   badges: {
     marginTop: '20px',
