@@ -11,7 +11,6 @@ import {
   PointElement,
 } from 'chart.js';
 
-// Registering Chart.js components
 ChartJS.register(
   ArcElement,
   LineElement,
@@ -22,19 +21,64 @@ ChartJS.register(
   PointElement
 );
 
-// Main Component
 export const Main = () => {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState('');
+
+  useEffect(() => {
+    // Fetch user data after login
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      console.log("Token retrieved:", storedToken); // Log the token for debugging
+      fetchUser(storedToken);
+    } else {
+      console.log("No token found in localStorage");
+    }
+  }, []);
+
+  const fetchUser = async (token) => {
+    try {
+      const response = await fetch('/api/user', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`API returned status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("API response:", data); // Log the API response to inspect the data
+
+      if (data.user) {
+        setUser(data.user);
+        setToken(token);
+      } else {
+        console.log("User data not found in API response.");
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error.message); // Log the error message for debugging
+    }
+  };
+
   return (
     <div style={styles.container}>
-      <Profile />
-      <ActivityAndNotifications />
-      <Leaderboard />
+      {user ? (
+        <>
+          <Profile user={user} />
+          <ActivityAndNotifications user={user} />
+          <Leaderboard />
+        </>
+      ) : (
+        <p>Loading user data...</p>  // Loading message while waiting for user data
+      )}
     </div>
   );
 };
 
-// Profile Component (Left Sidebar)
-const Profile = () => {
+const Profile = ({ user }) => {
   return (
     <aside style={styles.sidebarLeft}>
       <div style={styles.profile}>
@@ -43,32 +87,28 @@ const Profile = () => {
           alt="Profile"
           style={styles.profilePicture}
         />
-        <h2 style={styles.name}>John Doe</h2>
-        <h4 style={styles.username}>@john_doe</h4>
-        <p style={styles.place}>New York, USA</p>
+        <h2 style={styles.name}>{user.username}</h2>
+        <h4 style={styles.email}>{user.email}</h4>
+        <p style={styles.place}>Phone: {user.phone}</p>
+        <p style={styles.place}>Aadhar: {user.aadhar}</p>
         <div style={styles.scoreBox}>
-          <p style={styles.contributionScore}>Contribution Score: 1200</p>
-        </div>
-        <div style={styles.scoreBox}>
-          <p style={styles.creditScore}>Credit Score: 750</p>
+          <p style={styles.contributionScore}>Plastic Items: {user.plasticHistory.length}</p>
         </div>
       </div>
     </aside>
   );
 };
 
-// Recycling Counter Component
-const RecyclingCounter = () => {
-  const [recycledCount, setRecycledCount] = useState(0);
+const RecyclingCounter = ({ user }) => {
+  const [recycledCount, setRecycledCount] = useState(user.plasticHistory.length);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Simulate recycling count update every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setRecycledCount((prev) => prev + 1);
       setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), 1000); // End animation after 1 second
-    }, 5000); // Update every 5 seconds
+      setTimeout(() => setIsAnimating(false), 1000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
@@ -96,7 +136,6 @@ const RecyclingCounter = () => {
   );
 };
 
-// Eco-Friendly Product Showcase Component
 const EcoFriendlyProductShowcase = () => {
   const products = [
     { id: 1, name: 'Reusable Water Bottle', points: 200 },
@@ -121,13 +160,12 @@ const EcoFriendlyProductShowcase = () => {
   );
 };
 
-// Donut Chart Component
-const DonutChart = () => {
+const DonutChart = ({ user }) => {
   const data = {
     labels: ['Recycled', 'Remaining'],
     datasets: [
       {
-        data: [70, 30], // Example data
+        data: [user.plasticHistory.length, 100 - user.plasticHistory.length],
         backgroundColor: ['#4caf50', '#e0e0e0'],
         hoverBackgroundColor: ['#66bb6a', '#cfd8dc'],
       },
@@ -142,7 +180,6 @@ const DonutChart = () => {
   );
 };
 
-// Audience Growth Line Chart Component
 const AudienceGrowth = () => {
   const data = {
     labels: ['1 Feb', '2 Feb', '3 Feb', '4 Feb', '5 Feb', '6 Feb', '7 Feb'],
@@ -176,7 +213,6 @@ const AudienceGrowth = () => {
   );
 };
 
-// Achievement Badges Component
 const AchievementBadges = () => {
   const badges = [
     { id: 1, name: 'Recycling Rookie', milestone: '5 items recycled' },
@@ -199,11 +235,10 @@ const AchievementBadges = () => {
   );
 };
 
-// Activity & Notifications Component (Main Content)
-const ActivityAndNotifications = () => {
+const ActivityAndNotifications = ({ user }) => {
   return (
     <main style={styles.mainContent}>
-      <RecyclingCounter />
+      <RecyclingCounter user={user} />
       <EcoFriendlyProductShowcase />
       <AchievementBadges />
       <AudienceGrowth />
@@ -222,7 +257,6 @@ const ActivityAndNotifications = () => {
   );
 };
 
-// Leaderboard Component (Right Sidebar)
 const Leaderboard = () => {
   return (
     <aside style={styles.sidebarRight}>
@@ -241,7 +275,6 @@ const Leaderboard = () => {
   );
 };
 
-// Inline Styles
 const styles = {
   container: {
     display: 'grid',
@@ -252,66 +285,56 @@ const styles = {
   },
   sidebarLeft: {
     backgroundColor: '#f8f9fa',
+    borderRadius: '8px',
     padding: '20px',
-    borderRadius: '10px',
   },
   profile: {
     textAlign: 'center',
   },
   profilePicture: {
-    width: '120px',
-    height: '120px',
     borderRadius: '50%',
-    marginBottom: '20px',
   },
   name: {
     fontSize: '24px',
-    fontWeight: 'bold',
-    marginBottom: '10px',
+    margin: '10px 0',
   },
-  username: {
+  email: {
     fontSize: '16px',
-    color: '#6c757d',
-    marginBottom: '5px',
+    margin: '5px 0',
   },
   place: {
-    fontSize: '14px',
-    color: '#6c757d',
-    marginBottom: '20px',
+    margin: '5px 0',
   },
   scoreBox: {
-    marginBottom: '15px',
+    marginTop: '20px',
+    padding: '10px',
+    backgroundColor: '#e1f5fe',
+    borderRadius: '5px',
   },
   contributionScore: {
-    fontSize: '18px',
-    fontWeight: 'bold',
-  },
-  creditScore: {
-    fontSize: '18px',
     fontWeight: 'bold',
   },
   recyclingCounter: {
-    textAlign: 'center',
-    marginBottom: '20px',
+    padding: '20px',
+    backgroundColor: '#e3f2fd',
+    borderRadius: '8px',
   },
   counterDisplay: {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    position: 'relative',
+    fontSize: '20px',
+    textAlign: 'center',
   },
   plasticItem: {
-    fontSize: '50px',
     position: 'absolute',
-    bottom: '50px',
-    left: '50%',
-    transform: 'translateX(-50%)',
+    fontSize: '50px',
     transition: 'transform 1s ease, opacity 1s ease',
   },
   bin: {
     fontSize: '50px',
   },
   productShowcase: {
-    marginTop: '20px',
+    padding: '20px',
+    backgroundColor: '#e8f5e9',
+    borderRadius: '8px',
   },
   productGrid: {
     display: 'grid',
@@ -319,87 +342,88 @@ const styles = {
     gap: '10px',
   },
   productCard: {
-    border: '1px solid #ccc',
-    borderRadius: '10px',
     padding: '10px',
+    backgroundColor: '#ffffff',
+    borderRadius: '5px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     textAlign: 'center',
   },
   productName: {
     fontWeight: 'bold',
   },
   redeemButton: {
-    marginTop: '5px',
     padding: '5px 10px',
-    backgroundColor: '#28a745',
+    backgroundColor: '#4caf50',
     color: '#fff',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '4px',
     cursor: 'pointer',
   },
   donutChart: {
-    marginTop: '20px',
-    width: '150px',
-    height: '150px',
+    padding: '20px',
+    backgroundColor: '#fff',
+    borderRadius: '8px',
   },
   chartContainer: {
-    marginTop: '20px',
+    padding: '20px',
+    backgroundColor: '#f3e5f5',
+    borderRadius: '8px',
   },
   badges: {
-    marginTop: '20px',
+    padding: '20px',
+    backgroundColor: '#fff3e0',
+    borderRadius: '8px',
   },
   badgeGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
     gap: '10px',
   },
   badgeCard: {
-    border: '1px solid #ccc',
-    borderRadius: '10px',
     padding: '10px',
+    backgroundColor: '#ffffff',
+    borderRadius: '5px',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
     textAlign: 'center',
   },
   mainContent: {
     padding: '20px',
-    backgroundColor: '#f1f1f1',
-    borderRadius: '10px',
-    margin: '20px 0',
+    backgroundColor: '#ffffff',
+    borderRadius: '8px',
   },
   activitySection: {
     marginTop: '20px',
   },
   activityCard: {
-    backgroundColor: '#ffffff',
     padding: '10px',
-    margin: '5px 0',
-    borderRadius: '10px',
+    backgroundColor: '#e3f2fd',
+    marginBottom: '10px',
+    borderRadius: '4px',
   },
   notificationSection: {
     marginTop: '20px',
   },
   notificationCard: {
-    backgroundColor: '#ffffff',
     padding: '10px',
-    margin: '5px 0',
-    borderRadius: '10px',
+    backgroundColor: '#ffe0b2',
+    marginBottom: '10px',
+    borderRadius: '4px',
   },
   sidebarRight: {
     backgroundColor: '#f8f9fa',
+    borderRadius: '8px',
     padding: '20px',
-    borderRadius: '10px',
-    height: '100vh', // Adjust to fit the height
-    overflowY: 'auto', // Enable scrolling for the leaderboard
   },
   leaderboardContainer: {
-    maxHeight: '400px', // Set a max height for the leaderboard to enable scrolling
+    maxHeight: '400px',
     overflowY: 'auto',
   },
   leaderboard: {
-    listStyle: 'none',
+    listStyleType: 'none',
     padding: 0,
   },
   leaderboardItem: {
-    padding: '5px 0',
-    borderBottom: '1px solid #ccc',
+    padding: '10px',
+    borderBottom: '1px solid #e0e0e0',
   },
 };
-
