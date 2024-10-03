@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Register
 router.post('/register', async (req, res) => {
-  const { username, email, password, aadhar, phone } = req.body;
+  const { username, email, password, aadhar, phone,plasticHistory } = req.body;
 
   // Check for required fields
   if (!username || !email || !password || !aadhar || !phone) {
@@ -27,7 +27,8 @@ router.post('/register', async (req, res) => {
       email,
       password: hashedPassword,
       aadhar,
-      phone
+      phone,
+      plasticHistory
     });
 
     await newUser.save();
