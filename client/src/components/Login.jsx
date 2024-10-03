@@ -12,22 +12,19 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      // Updated endpoint to match the backend route
       const response = await axios.post('http://localhost:5000/api/auth/login', { username, password });
 
-      
-      // Save the token (can also use localStorage, sessionStorage, etc.)
+      // Save the token (JWT)
       const token = response.data.token;
-      localStorage.setItem('authToken', token); // Save JWT in localStorage
+      localStorage.setItem('authToken', token);
 
-      // Optionally, store user details in localStorage or state for later use
+      // Optionally, store user details in localStorage
       const userDetails = response.data.user;
-      localStorage.setItem('userDetails', JSON.stringify(userDetails)); // Save user details
+      localStorage.setItem('userDetails', JSON.stringify(userDetails));
 
       // Redirect to main page after successful login
-      navigate('/');  // Assuming "/main" is the route for main.jsx
+      navigate('/');
     } catch (error) {
-      // Handle errors more specifically
       if (error.response && error.response.status === 400) {
         setError(error.response.data.msg); // Set error message from server
       } else {
@@ -37,28 +34,99 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleLogin}>
-        <input 
-          type="text" 
-          placeholder="Username" 
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required // Add required attribute for better UX
-        />
-        <input 
-          type="password" 
-          placeholder="Password" 
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required // Add required attribute for better UX
-        />
-        <button type="submit">Login</button>
-      </form>
+    <div style={styles.container}>
+      <div style={styles.formContainer}>
+        <h2 style={styles.title}>Login</h2>
+        {error && <p style={styles.error}>{error}</p>}
+        <form onSubmit={handleLogin} style={styles.form}>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            style={styles.input}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={styles.input}
+          />
+          <button type="submit" style={styles.button}>Log In</button>
+        </form>
+        <p style={styles.registerText}>
+          New user? <span style={styles.registerLink} onClick={() => navigate('/api/auth/register')}>Register</span>
+        </p>
+      </div>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    backgroundColor: '#f5f5f5',
+  },
+  formContainer: {
+    backgroundColor: '#fff',
+    padding: '40px',
+    borderRadius: '4px',
+    border: '1px solid #dbdbdb',
+    width: '350px',
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    marginBottom: '20px',
+    color: '#333',
+    fontFamily: 'Arial, sans-serif',
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  input: {
+    padding: '10px',
+    margin: '8px 0',
+    borderRadius: '4px',
+    border: '1px solid #dbdbdb',
+    fontSize: '14px',
+    backgroundColor: '#fafafa',
+    outline: 'none',
+  },
+  button: {
+    padding: '12px',
+    backgroundColor: '#28a745',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    fontSize: '14px',
+    marginTop: '15px',
+  },
+  error: {
+    color: 'red',
+    marginBottom: '10px',
+    fontSize: '12px',
+  },
+  registerText: {
+    marginTop: '15px',
+    fontSize: '14px',
+    color: '#666',
+  },
+  registerLink: {
+    color: '#28a745',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+  },
 };
 
 export default Login;
