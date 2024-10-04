@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Doughnut, Line } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
-  ArcElement,
   LineElement,
   Tooltip,
   Legend,
@@ -12,15 +11,7 @@ import {
 } from 'chart.js';
 
 // Registering Chart.js components
-ChartJS.register(
-  ArcElement,
-  LineElement,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  PointElement
-);
+ChartJS.register(LineElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement);
 
 // Main Component
 export const Main = () => {
@@ -43,9 +34,9 @@ const Profile = () => {
           alt="Profile"
           style={styles.profilePicture}
         />
-        <h2 style={styles.name}>John Doe</h2>
-        <h4 style={styles.username}>@john_doe</h4>
-        <p style={styles.place}>New York, USA</p>
+        <h2 style={styles.name}>channarama</h2>
+        <h4 style={styles.username}>@channarama</h4>
+        <p style={styles.place}>Tumkur,india</p>
         <div style={styles.scoreBox}>
           <p style={styles.contributionScore}>Contribution Score: 1200</p>
         </div>
@@ -57,40 +48,24 @@ const Profile = () => {
   );
 };
 
-// Recycling Counter Component
-const RecyclingCounter = () => {
-  const [recycledCount, setRecycledCount] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  // Simulate recycling count update every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRecycledCount((prev) => prev + 1);
-      setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), 1000); // End animation after 1 second
-    }, 5000); // Update every 5 seconds
-
-    return () => clearInterval(interval);
-  }, []);
+// Achievement Badges Component
+const AchievementBadges = () => {
+  const badges = [
+    { id: 1, name: 'Recycling Rookie', milestone: '5 items recycled' },
+    { id: 2, name: 'Eco Warrior', milestone: '50 items recycled' },
+    { id: 3, name: 'Sustainability Champion', milestone: '100 items recycled' },
+  ];
 
   return (
-    <div style={styles.recyclingCounter}>
-      <h3>Live Recycling Counter</h3>
-      <div style={styles.counterDisplay}>
-        {recycledCount} Items Recycled
-        <div style={{ position: 'relative' }}>
-          <div
-            style={{
-              ...styles.plasticItem,
-              transform: isAnimating ? 'translateY(0px)' : 'translateY(-200px)',
-              opacity: isAnimating ? 1 : 0,
-              transition: 'transform 1s ease, opacity 1s ease',
-            }}
-          >
-            ♻️
+    <div style={styles.badges}>
+      <h3>Achievement Badges</h3>
+      <div style={styles.badgeGrid}>
+        {badges.map((badge) => (
+          <div key={badge.id} style={styles.badgeCard}>
+            <p>{badge.name}</p>
+            <p>{badge.milestone}</p>
           </div>
-          <div style={styles.bin}>🗑️</div>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -121,48 +96,21 @@ const EcoFriendlyProductShowcase = () => {
   );
 };
 
-// Donut Chart Component
-const DonutChart = () => {
+// Audience Growth Line Chart Component (Updated to show plastic recycled and amount earned)
+const PlasticRecyclingGraph = () => {
   const data = {
-    labels: ['Recycled', 'Remaining'],
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
     datasets: [
       {
-        data: [70, 30], // Example data
-        backgroundColor: ['#4caf50', '#e0e0e0'],
-        hoverBackgroundColor: ['#66bb6a', '#cfd8dc'],
+        label: 'Plastic Recycled (kg)',
+        data: [5, 12, 8, 18, 15, 9, 20],
+        borderColor: '#4caf50',
+        fill: false,
       },
-    ],
-  };
-
-  return (
-    <div style={styles.donutChart}>
-      <h3>Recycling Progress</h3>
-      <Doughnut data={data} options={{ maintainAspectRatio: false }} />
-    </div>
-  );
-};
-
-// Audience Growth Line Chart Component
-const AudienceGrowth = () => {
-  const data = {
-    labels: ['1 Feb', '2 Feb', '3 Feb', '4 Feb', '5 Feb', '6 Feb', '7 Feb'],
-    datasets: [
       {
-        label: 'Organic Page Likes',
-        data: [12, 10, 14, 15, 18, 20, 25],
+        label: 'Amount Earned ($)',
+        data: [50, 120, 80, 180, 150, 90, 200],
         borderColor: '#FF6600',
-        fill: false,
-      },
-      {
-        label: 'Paid Page Likes',
-        data: [8, 9, 10, 12, 14, 16, 18],
-        borderColor: '#6610f2',
-        fill: false,
-      },
-      {
-        label: 'Page Unlikes',
-        data: [5, 4, 6, 5, 7, 8, 9],
-        borderColor: '#999999',
         fill: false,
       },
     ],
@@ -170,31 +118,8 @@ const AudienceGrowth = () => {
 
   return (
     <div style={styles.chartContainer}>
-      <h3>Audience Growth</h3>
+      <h3>Recycling Overview</h3>
       <Line data={data} options={{ responsive: true }} />
-    </div>
-  );
-};
-
-// Achievement Badges Component
-const AchievementBadges = () => {
-  const badges = [
-    { id: 1, name: 'Recycling Rookie', milestone: '5 items recycled' },
-    { id: 2, name: 'Eco Warrior', milestone: '50 items recycled' },
-    { id: 3, name: 'Sustainability Champion', milestone: '100 items recycled' },
-  ];
-
-  return (
-    <div style={styles.badges}>
-      <h3>Achievement Badges</h3>
-      <div style={styles.badgeGrid}>
-        {badges.map((badge) => (
-          <div key={badge.id} style={styles.badgeCard}>
-            <p>{badge.name}</p>
-            <p>{badge.milestone}</p>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };
@@ -203,20 +128,15 @@ const AchievementBadges = () => {
 const ActivityAndNotifications = () => {
   return (
     <main style={styles.mainContent}>
-      <RecyclingCounter />
-      <EcoFriendlyProductShowcase />
       <AchievementBadges />
-      <AudienceGrowth />
-      <section style={styles.activitySection}>
-        <h3>Recent Activity</h3>
-        <div style={styles.activityCard}>Posted an article - 2 hours ago</div>
-        <div style={styles.activityCard}>Commented on a discussion - 1 day ago</div>
-        <div style={styles.activityCard}>Upvoted a post - 3 days ago</div>
-      </section>
+      <EcoFriendlyProductShowcase />
+      <PlasticRecyclingGraph />
       <section style={styles.notificationSection}>
         <h3>Notifications</h3>
         <div style={styles.notificationCard}>You have 3 new comments</div>
         <div style={styles.notificationCard}>Your post was upvoted by 5 people</div>
+        <div style={styles.notificationCard}>You earned 200 points for recycling</div>
+        <div style={styles.notificationCard}>New badge: Eco Warrior unlocked!</div>
       </section>
     </main>
   );
@@ -236,7 +156,6 @@ const Leaderboard = () => {
           ))}
         </ul>
       </div>
-      <DonutChart />
     </aside>
   );
 };
@@ -290,25 +209,19 @@ const styles = {
     fontSize: '18px',
     fontWeight: 'bold',
   },
-  recyclingCounter: {
+  badges: {
+    marginTop: '20px',
+  },
+  badgeGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '10px',
+  },
+  badgeCard: {
+    border: '1px solid #ccc',
+    borderRadius: '10px',
+    padding: '10px',
     textAlign: 'center',
-    marginBottom: '20px',
-  },
-  counterDisplay: {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    position: 'relative',
-  },
-  plasticItem: {
-    fontSize: '50px',
-    position: 'absolute',
-    bottom: '50px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    transition: 'transform 1s ease, opacity 1s ease',
-  },
-  bin: {
-    fontSize: '50px',
   },
   productShowcase: {
     marginTop: '20px',
@@ -336,42 +249,14 @@ const styles = {
     borderRadius: '5px',
     cursor: 'pointer',
   },
-  donutChart: {
-    marginTop: '20px',
-    width: '150px',
-    height: '150px',
-  },
   chartContainer: {
     marginTop: '20px',
-  },
-  badges: {
-    marginTop: '20px',
-  },
-  badgeGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '10px',
-  },
-  badgeCard: {
-    border: '1px solid #ccc',
-    borderRadius: '10px',
-    padding: '10px',
-    textAlign: 'center',
   },
   mainContent: {
     padding: '20px',
     backgroundColor: '#f1f1f1',
     borderRadius: '10px',
     margin: '20px 0',
-  },
-  activitySection: {
-    marginTop: '20px',
-  },
-  activityCard: {
-    backgroundColor: '#ffffff',
-    padding: '10px',
-    margin: '5px 0',
-    borderRadius: '10px',
   },
   notificationSection: {
     marginTop: '20px',
@@ -391,14 +276,16 @@ const styles = {
   },
   leaderboardContainer: {
     maxHeight: '400px', // Set a max height for the leaderboard to enable scrolling
-    overflowY: 'auto',
+    overflowY: 'scroll',
   },
   leaderboard: {
     listStyle: 'none',
-    padding: 0,
+    paddingLeft: '0',
   },
   leaderboardItem: {
-    padding: '5px 0',
-    borderBottom: '1px solid #ccc',
+    padding: '10px',
+    borderBottom: '1px solid #ddd',
   },
 };
+
+export default Main;
